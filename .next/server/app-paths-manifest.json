@@ -6,5 +6,6 @@
   "/tenants/page": "app/tenants/page.js",
   "/merchants/page": "app/merchants/page.js",
   "/events/page": "app/events/page.js",
-  "/users/page": "app/users/page.js"
+  "/users/page": "app/users/page.js",
+  "/analytics/page": "app/analytics/page.js"
 }
