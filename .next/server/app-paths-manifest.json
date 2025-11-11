@@ -1,11 +1,8 @@
 {
-  "/api/auth/login/route": "app/api/auth/login/route.js",
-  "/api/auth/me/route": "app/api/auth/me/route.js",
   "/login/page": "app/login/page.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/tenants/page": "app/tenants/page.js",
-  "/merchants/page": "app/merchants/page.js",
-  "/events/page": "app/events/page.js",
   "/users/page": "app/users/page.js",
-  "/analytics/page": "app/analytics/page.js"
+  "/analytics/page": "app/analytics/page.js",
+  "/page": "app/page.js"
 }
