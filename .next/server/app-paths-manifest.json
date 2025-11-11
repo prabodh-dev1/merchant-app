@@ -5,5 +5,7 @@
   "/login/page": "app/login/page.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/tenants/page": "app/tenants/page.js",
-  "/merchants/page": "app/merchants/page.js"
+  "/merchants/page": "app/merchants/page.js",
+  "/events/page": "app/events/page.js",
+  "/users/page": "app/users/page.js"
 }
