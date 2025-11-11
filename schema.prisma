@@ -1,0 +1,211 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Core Entities
+// ============================================
+
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique
+  status    TenantStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  merchants         Merchant[]
+  marketingEvents   MarketingEvent[]
+  tenantAssignments TenantAssignment[]
+
+  @@index([status])
+  @@map("tenants")
+}
+
+model Merchant {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique @db.Char(3) // Exactly 3 characters for reward codes
+  tenantId  String
+  status    MerchantStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  tenant              Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  marketingEvents     MarketingEvent[]
+  rewards             Reward[]
+  merchantAssignments MerchantAssignment[]
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("merchants")
+}
+
+model MarketingEvent {
+  id                              String   @id @default(uuid())
+  name                            String
+  tenantId                        String
+  merchantId                      String
+  minRewardValue                  Decimal  @db.Decimal(10, 2)
+  maxRewardValue                  Decimal  @db.Decimal(10, 2)
+  totalRewards                    Int
+  allowDummyRewards               Boolean  @default(false)
+  allowMultipleRewardsPerCustomer Boolean  @default(true)
+  startDate                       DateTime
+  endDate                         DateTime
+  rewardValidityStart             DateTime?
+  rewardValidityEnd               DateTime?
+  status                          EventStatus @default(DRAFT)
+  createdBy                       String
+  createdAt                       DateTime @default(now())
+  updatedAt                       DateTime @updatedAt
+
+  // Relationships
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  creator User     @relation(fields: [createdBy], references: [id])
+  rewards Reward[]
+
+  @@index([tenantId])
+  @@index([merchantId])
+  @@index([status])
+  @@index([startDate, endDate])
+  @@map("marketing_events")
+}
+
+model Reward {
+  id            String   @id @default(uuid())
+  codePart1     String   @unique @db.Char(8) // Customer-facing code
+  codePart2     String   @unique @db.Char(8) // Redemption code (never shared with customer)
+  fullCode      String   @unique @db.Char(17) // Combined: ABC12345-9X7K2M1P
+  eventId       String
+  merchantId    String
+  rewardValue   Decimal  @db.Decimal(10, 2)
+  status        RewardStatus @default(AVAILABLE)
+  isDummy       Boolean  @default(false)
+  customerId    String?
+  distributedAt DateTime?
+  claimedAt     DateTime?
+  expiresAt     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relationships
+  event    MarketingEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  merchant Merchant       @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([codePart1])
+  @@index([fullCode])
+  @@index([eventId, status])
+  @@index([merchantId, status])
+  @@index([customerId])
+  @@map("rewards")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  firebaseUid String   @unique
+  email       String   @unique
+  name        String
+  role        UserRole
+  status      UserStatus @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  tenantAssignments   TenantAssignment[]
+  merchantAssignments MerchantAssignment[]
+  createdEvents       MarketingEvent[]
+
+  @@index([firebaseUid])
+  @@index([email])
+  @@index([role, status])
+  @@map("users")
+}
+
+model TenantAssignment {
+  id         String   @id @default(uuid())
+  userId     String
+  tenantId   String
+  assignedBy String
+  assignedAt DateTime @default(now())
+
+  // Relationships
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assigner User   @relation("AssignedTenants", fields: [assignedBy], references: [id])
+
+  @@unique([userId, tenantId])
+  @@index([userId])
+  @@index([tenantId])
+  @@map("tenant_assignments")
+}
+
+model MerchantAssignment {
+  id         String   @id @default(uuid())
+  userId     String
+  merchantId String
+  assignedBy String
+  assignedAt DateTime @default(now())
+
+  // Relationships
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  assigner User     @relation("AssignedMerchants", fields: [assignedBy], references: [id])
+
+  @@unique([userId, merchantId])
+  @@index([userId])
+  @@index([merchantId])
+  @@map("merchant_assignments")
+}
+
+// ============================================
+// Enums
+// ============================================
+
+enum TenantStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum MerchantStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum EventStatus {
+  DRAFT
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum RewardStatus {
+  AVAILABLE
+  DISTRIBUTED
+  CLAIMED
+  EXPIRED
+  CANCELLED
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  TENANT_MARKETING_ADMIN
+  MERCHANT_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
