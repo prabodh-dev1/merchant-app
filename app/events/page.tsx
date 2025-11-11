@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
