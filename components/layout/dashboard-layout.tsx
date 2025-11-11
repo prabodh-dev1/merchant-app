@@ -27,7 +27,7 @@ export function DashboardLayout({ children, pageTitle }: DashboardLayoutProps) {
         } else {
           router.push('/login');
         }
-      } catch (error) {
+      } catch {
         router.push('/login');
       } finally {
         setLoading(false);

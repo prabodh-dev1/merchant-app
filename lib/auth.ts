@@ -1,4 +1,4 @@
-import { User, UserRole } from './types';
+import { UserRole } from './types';
 
 const HARDCODED_USERS = [
   {

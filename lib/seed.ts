@@ -40,7 +40,7 @@ export async function seedDatabase() {
       .select()
       .single();
 
-    const { data: merchant2 } = await supabase
+    await supabase
       .from('merchants')
       .insert({
         name: 'Pizza Hut',
@@ -51,7 +51,7 @@ export async function seedDatabase() {
       .select()
       .single();
 
-    const { data: merchant3 } = await supabase
+    await supabase
       .from('merchants')
       .insert({
         name: 'Starbucks',
@@ -158,7 +158,7 @@ export async function seedDatabase() {
       const statuses = ['AVAILABLE', 'DISTRIBUTED', 'CLAIMED'];
       const status = statuses[Math.floor(Math.random() * statuses.length)];
 
-      const reward: any = {
+      const reward: Record<string, unknown> = {
         code_part1: codePart1,
         code_part2: codePart2,
         full_code: fullCode,

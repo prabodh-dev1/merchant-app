@@ -16,7 +16,7 @@ export default function ClaimRewardPage() {
   const [state, setState] = useState<ClaimState>('input');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [rewardData, setRewardData] = useState<any>(null);
+  const [rewardData, setRewardData] = useState<Record<string, unknown> | null>(null);
 
   const handleVerify = async () => {
     if (rewardCode.length !== 8) {
@@ -54,7 +54,7 @@ export default function ClaimRewardPage() {
 
       setRewardData(data);
       setState('verified');
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.');
       setState('error');
     } finally {
@@ -63,6 +63,8 @@ export default function ClaimRewardPage() {
   };
 
   const handleClaim = async () => {
+    if (!rewardData) return;
+
     setLoading(true);
 
     try {
@@ -72,12 +74,12 @@ export default function ClaimRewardPage() {
           status: 'CLAIMED',
           claimed_at: new Date().toISOString(),
         })
-        .eq('id', rewardData.id);
+        .eq('id', rewardData.id as string);
 
       if (updateError) throw updateError;
 
       setState('success');
-    } catch (err) {
+    } catch {
       setError('Failed to claim reward. Please try again.');
       setState('error');
     } finally {
@@ -141,7 +143,7 @@ export default function ClaimRewardPage() {
                 <div className="text-center">
                   <p className="text-sm text-slate-600">Reward Code</p>
                   <p className="mt-2 font-mono text-2xl font-bold text-slate-900">
-                    {rewardData.code_part1}
+                    {String(rewardData.code_part1)}
                   </p>
                 </div>
                 <div className="mt-6 text-center">
@@ -180,7 +182,7 @@ export default function ClaimRewardPage() {
                   <Gift className="mx-auto h-16 w-16 text-green-500" />
                   <p className="mt-4 text-sm font-medium text-slate-600">Full Reward Code</p>
                   <p className="mt-2 font-mono text-xl font-bold text-slate-900">
-                    {rewardData.full_code}
+                    {String(rewardData.full_code)}
                   </p>
                   <p className="mt-6 text-sm font-medium text-slate-600">Reward Value</p>
                   <p className="mt-2 text-4xl font-bold text-green-600">

@@ -36,9 +36,9 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Login failed', details: error.message },
+      { success: false, error: 'Login failed', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
