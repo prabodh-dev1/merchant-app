@@ -1,4 +1,17 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/auth/logout/route": "app/api/auth/logout/route.js",
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/api/seed/route": "app/api/seed/route.js",
   "/page": "app/page.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js"
+  "/tenants/page": "app/tenants/page.js",
+  "/users/page": "app/users/page.js",
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(dashboard)/analytics/page": "app/(dashboard)/analytics/page.js",
+  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
+  "/(dashboard)/events/page": "app/(dashboard)/events/page.js",
+  "/(dashboard)/merchants/page": "app/(dashboard)/merchants/page.js",
+  "/(dashboard)/rewards/claim/page": "app/(dashboard)/rewards/claim/page.js",
+  "/(dashboard)/rewards/page": "app/(dashboard)/rewards/page.js"
 }
